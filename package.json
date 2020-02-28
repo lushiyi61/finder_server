@@ -1,0 +1,31 @@
+{
+  "name": "finder_server",
+  "version": "1.0.0",
+  "description": "HTTP发现服务器",
+  "main": "index.js",
+  "scripts": {
+    "start": "pm2 start pm2.yaml",
+    "stop": "pm2 stop pm2.yaml",
+    "dev": "ts-node-dev --respawn --transpileOnly ./app.ts",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lushiyi61/finder_server.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/lushiyi61/finder_server/issues"
+  },
+  "homepage": "https://github.com/lushiyi61/finder_server#readme",
+  "dependencies": {
+    "@types/express": "^4.17.2",
+    "@types/node": "^13.7.6",
+    "express": "^4.17.1",
+    "log4js": "^6.1.2",
+    "ts-node": "^8.6.2",
+    "ts-node-dev": "^1.0.0-pre.44",
+    "typescript": "^3.8.2"
+  }
+}
