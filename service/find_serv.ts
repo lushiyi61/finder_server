@@ -10,7 +10,7 @@ import bodyParser = require('body-parser');
 
 const app = Express();
 app.use(bodyParser.json());
-function start(http_ip: string, http_port: number) {
+export function find_serv_start(http_ip: string, http_port: number) {
     //设置跨域访问
     app.all('*', (req, res, next) => {
         res.header("Access-Control-Allow-Origin", "*");
@@ -43,5 +43,3 @@ app.get("/find", (req, res) => {
 app.get("/all", (req, res) => {
     http_return(res, { data: get_all_server_info() });
 })
-
-export { start as find_serv_start }
