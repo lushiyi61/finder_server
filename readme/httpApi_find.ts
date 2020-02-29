@@ -1,3 +1,10 @@
+export const SERVER_REQUEST = {
+    CREATE: "/create",
+    FIND: "/find",
+    ALL: "/all"
+}
+
+
 export interface ServerReq {
     server_type: string,    // 服务类型
     server_id: string,      // 服务ID

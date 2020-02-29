@@ -3,7 +3,7 @@ import { basename } from "path";
 const logger = log4js.getLogger(basename(__filename));
 ///////////////////////////////////////////////////////
 import Express = require("express");
-import { ServerReq, FindReq } from "../readme/httpApi_find";
+import { ServerReq, FindReq, SERVER_REQUEST } from "../readme/httpApi_find";
 import { http_return } from "../common/service/http_server";
 import { create_server_info, get_all_server_info, get_server_info } from "../manager/server_mgr";
 import bodyParser = require('body-parser');
@@ -27,19 +27,19 @@ export function find_serv_start(http_ip: string, http_port: number) {
 }
 
 // 服务注册
-app.get("/create", (req, res) => {
+app.post(SERVER_REQUEST.CREATE, (req, res) => {
     const server_info: ServerReq = req.body;
     create_server_info(server_info);
     http_return(res, {});
 })
 
 // 服务查询
-app.get("/find", (req, res) => {
+app.post(SERVER_REQUEST.FIND, (req, res) => {
     const find_info: FindReq = req.body;
     http_return(res, { data: get_server_info(find_info.server_type, find_info.server_id) })
 })
 
 // 服务监控
-app.get("/all", (req, res) => {
+app.get(SERVER_REQUEST.ALL, (req, res) => {
     http_return(res, { data: get_all_server_info() });
 })
