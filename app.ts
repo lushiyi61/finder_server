@@ -3,7 +3,7 @@ import { basename } from "path";
 const logger = log4js.getLogger(basename(__filename));
 ///////////////////////////////////////////////////////
 import config = require("./config.json");
-import { find_serv_start } from "./service/find_serv";
+import { find_serv_start } from "./common/findserv/service/find_serv";
 import { server_mgr_start } from "./manager/server_mgr";
 
 process.on('uncaughtException', function (err) {
