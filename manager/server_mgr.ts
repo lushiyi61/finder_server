@@ -17,7 +17,7 @@ function delete_die_server(out_time: number) {
     SERVER_MAP_MAP.forEach((server_map_info, key_type) => {
         server_map_info.forEach((server_info, key_id) => {
             if (now > server_info.tick_time + new_out_time) {
-                logger.warn("A service is died. type:%s, id:%s", server_info.server_type, server_info.server_id);
+                logger.warn("A service is died. type:[%s], id:[%s]", server_info.server_type, server_info.server_id);
                 server_map_info.delete(key_id);
             }
 
@@ -46,7 +46,7 @@ export function create_server_info(server_info: ServerReq) {
             logger.info(server_info); // 服务有更新
         }
     } else {
-        logger.info("there is new server connected, server type is ", server_type);
+        logger.info("there is new server connected, type:[%s], id:[%s]", server_type, server_id);
     }
     server_info.tick_time = Date.now();
     server_map_info.set(server_id, server_info);
@@ -98,7 +98,7 @@ function get_min_load_entry(server_type: string, load_type: LOAD_TYPE = LOAD_TYP
         default:
             {
                 const server_map_info = SERVER_MAP_MAP.get(server_type);
-                return server_map_info.get(server_map_info.keys[0]);
+                return server_map_info.get(server_map_info.keys()[0]);
             }
     }
 }
