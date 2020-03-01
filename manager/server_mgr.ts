@@ -19,7 +19,7 @@ function delete_die_server(out_time: number) {
         for (let key_id in server_map_info) {
             const server_info = server_map_info.get(key_id);
             if (now > server_info.tick_time + new_out_time) {
-                logger.warn("A service is die.   ", JSON.stringify(server_info));
+                logger.warn("A service is died. type:%s, id:%s", server_info.server_type, server_info.server_id);
                 server_map_info.delete(key_id);
             }
         }
@@ -45,6 +45,8 @@ export function create_server_info(server_info: ServerReq) {
         ) {
             logger.info(server_info); // 服务有更新
         }
+    } else {
+        logger.info("there is new server connected, server type is ", server_type);
     }
     server_info.tick_time = Date.now();
     server_map_info.set(server_id, server_info);
@@ -62,10 +64,10 @@ export function get_all_server_info(): any {
  */
 export function get_server_info(server_type: string, server_id?: string): ServerReq {
     let server_info: ServerReq = null;
-    if (SERVER_MAP_MAP[server_type]) { // 服务存在
-        const server_map_info = SERVER_MAP_MAP[server_type];
-        if (server_id && server_map_info[server_id]) { // 获取指定服务器
-            return server_map_info[server_id];
+    if (SERVER_MAP_MAP.has(server_type)) { // 服务存在
+        const server_map_info = SERVER_MAP_MAP.get(server_type);
+        if (server_id && server_map_info.has(server_id)) { // 获取指定服务器
+            return server_map_info.get(server_id);
         } else {  // 负载均衡
             return get_min_load_entry(server_type);
         }
@@ -83,7 +85,7 @@ export function server_mgr_start(out_time: number) {
  */
 function get_min_load_entry(server_type: string, load_type: LOAD_TYPE = LOAD_TYPE.NO_LOAD): ServerReq {
     //服务器列表，必须存在
-    if (!SERVER_MAP_MAP[server_type]) return null;
+    if (!SERVER_MAP_MAP.has(server_type)) return null;
     /**
      * 负载方案
      * 1：无负载
@@ -95,7 +97,7 @@ function get_min_load_entry(server_type: string, load_type: LOAD_TYPE = LOAD_TYP
         case LOAD_TYPE.NO_LOAD:
         default:
             {
-                const server_infos: ServerReq[] = Object.values(SERVER_MAP_MAP[server_type]);
+                const server_infos: ServerReq[] = Object.values(SERVER_MAP_MAP.get(server_type));
                 return server_infos[0];
             }
     }
