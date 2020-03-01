@@ -55,8 +55,16 @@ export function create_server_info(server_info: ServerReq) {
     // server_info.server_type, server_info.server_id, server_info.load, server_info.memory);
 }
 
-export function get_all_server_info(): any {
-    return SERVER_MAP_MAP;
+export function get_all_server_info(): ServerReq[][] {
+    const all_servers: ServerReq[][] = [];
+    SERVER_MAP_MAP.forEach(server_map_info => {
+        const servers: ServerReq[] = [];
+        server_map_info.forEach(server_info => {
+            servers.push(server_info);
+        })
+        all_servers.push(servers);
+    })
+    return all_servers;
 }
 
 /**
@@ -86,6 +94,12 @@ export function server_mgr_start(out_time: number) {
 function get_min_load_entry(server_type: string, load_type: LOAD_TYPE = LOAD_TYPE.NO_LOAD): ServerReq {
     //服务器列表，必须存在
     if (!SERVER_MAP_MAP.has(server_type)) return null;
+    const server_map_info = SERVER_MAP_MAP.get(server_type);
+    const servers: ServerReq[] = [];
+    server_map_info.forEach(value => {
+        servers.push(value);
+    })
+
     /**
      * 负载方案
      * 1：无负载
@@ -97,8 +111,7 @@ function get_min_load_entry(server_type: string, load_type: LOAD_TYPE = LOAD_TYP
         case LOAD_TYPE.NO_LOAD:
         default:
             {
-                const server_map_info = SERVER_MAP_MAP.get(server_type);
-                return server_map_info.get(server_map_info.keys()[0]);
+                return servers[0];
             }
     }
 }
