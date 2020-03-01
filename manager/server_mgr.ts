@@ -14,21 +14,21 @@ enum LOAD_TYPE { NO_LOAD } // 负载方案
 function delete_die_server(out_time: number) {
     const now = Date.now();
     const new_out_time = 2 * out_time;
-    for (let key_type in SERVER_MAP_MAP) {
-        const server_map_info = SERVER_MAP_MAP.get(key_type);
-        for (let key_id in server_map_info) {
-            const server_info = server_map_info.get(key_id);
+    SERVER_MAP_MAP.forEach((server_map_info, key_type) => {
+        server_map_info.forEach((server_info, key_id) => {
             if (now > server_info.tick_time + new_out_time) {
                 logger.warn("A service is died. type:%s, id:%s", server_info.server_type, server_info.server_id);
                 server_map_info.delete(key_id);
             }
-        }
-        if (server_map_info.size == 0) {
-            SERVER_MAP_MAP.delete(key_type);
-        }
-    }
+
+            if (server_map_info.size == 0) {
+                SERVER_MAP_MAP.delete(key_type);
+            }
+        })
+    })
+
     // logger.debug(SERVER_MAP_MAP);
-    setTimeout(delete_die_server, 2000, out_time);
+    setTimeout(delete_die_server, out_time, out_time);
 }
 
 export function create_server_info(server_info: ServerReq) {
@@ -77,7 +77,7 @@ export function get_server_info(server_type: string, server_id?: string): Server
 
 export function server_mgr_start(out_time: number) {
     logger.info("server manager start . out_time is: ", out_time);
-    setTimeout(delete_die_server, 2000, out_time);
+    setTimeout(delete_die_server, out_time, out_time);
 }
 
 /**
@@ -97,8 +97,8 @@ function get_min_load_entry(server_type: string, load_type: LOAD_TYPE = LOAD_TYP
         case LOAD_TYPE.NO_LOAD:
         default:
             {
-                const server_infos: ServerReq[] = Object.values(SERVER_MAP_MAP.get(server_type));
-                return server_infos[0];
+                const server_map_info = SERVER_MAP_MAP.get(server_type);
+                return server_map_info.get(server_map_info.keys[0]);
             }
     }
 }
