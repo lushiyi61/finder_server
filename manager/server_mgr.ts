@@ -1,8 +1,8 @@
 import log4js from "../common/utils/log4js";
 import { basename } from "path";
-import { ServerReq } from "../common/findserv/readme/httpApi_find";
 const logger = log4js.getLogger(basename(__filename));
 ///////////////////////////////////////////////////////
+import { ServerReq } from "../common/findserv/readme/httpApi_find";
 
 
 const SERVER_MAP_MAP = new Map<string, Map<string, ServerReq>>()  // K:服务类型  V:MAP k:服务ID v:服务
@@ -15,16 +15,16 @@ function delete_die_server(out_time: number) {
     const now = Date.now();
     const new_out_time = 2 * out_time;
     for (let key_type in SERVER_MAP_MAP) {
-        const server_map_info = SERVER_MAP_MAP[key_type];
+        const server_map_info = SERVER_MAP_MAP.get(key_type);
         for (let key_id in server_map_info) {
-            const server_info = server_map_info[key_id];
-            if (now > server_info.ticktime + new_out_time) {
+            const server_info = server_map_info.get(key_id);
+            if (now > server_info.tick_time + new_out_time) {
                 logger.warn("A service is die.   ", JSON.stringify(server_info));
-                delete server_map_info[key_id];
+                server_map_info.delete(key_id);
             }
         }
-        if (Object.keys(SERVER_MAP_MAP[key_type]).length == 0) {
-            delete SERVER_MAP_MAP[key_type];
+        if (server_map_info.size == 0) {
+            SERVER_MAP_MAP.delete(key_type);
         }
     }
     // logger.debug(SERVER_MAP_MAP);
@@ -34,10 +34,10 @@ function delete_die_server(out_time: number) {
 export function create_server_info(server_info: ServerReq) {
     const { ws_ip, ws_port, http_ip, http_port, server_id, server_type } = server_info;
     //如果有必须 初始化服务器列表
-    if (!SERVER_MAP_MAP[server_type]) SERVER_MAP_MAP[server_type] = new Map<string, ServerReq>();
-    const server_map_info: Map<string, ServerReq> = SERVER_MAP_MAP[server_type];
-    if (server_map_info[server_id]) {
-        const old_server_info = server_map_info[server_id];
+    if (!SERVER_MAP_MAP.has(server_type)) SERVER_MAP_MAP.set(server_type, new Map<string, ServerReq>());
+    const server_map_info = SERVER_MAP_MAP.get(server_type);
+    if (server_map_info.has(server_id)) {
+        const old_server_info = server_map_info.get(server_id);
         if (old_server_info.ws_ip != ws_ip ||
             old_server_info.ws_port != ws_port ||
             old_server_info.http_ip != http_ip ||
@@ -47,7 +47,7 @@ export function create_server_info(server_info: ServerReq) {
         }
     }
     server_info.tick_time = Date.now();
-    server_map_info[server_id] = server_info;
+    server_map_info.set(server_id, server_info);
 
     // logger.info("type:%s id:%s load:%d mem:%s",
     // server_info.server_type, server_info.server_id, server_info.load, server_info.memory);
