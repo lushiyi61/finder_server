@@ -1,8 +1,8 @@
 {
     "ENV": "dev",
     "find_server": {
-        "find_ip": "127.0.0.1",
-        "find_port": 7777,
-        "server_tick_time": 5000
+        "server_ip": "127.0.0.1",
+        "server_port": 7777,
+        "tick_time": 5000
     }
 }

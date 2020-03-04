@@ -23,7 +23,7 @@ if (config.ENV == 'dev') {
 logger.info("==========================程  序  启  动==========================");
 //启动服务发现
 const find_server = config.find_server;
-find_serv_start(find_server.find_ip, find_server.find_port);
+find_serv_start(find_server.server_ip, find_server.server_port);
 //定时清理僵尸服务
-server_mgr_start(find_server.server_tick_time);
+server_mgr_start(find_server.tick_time);
 logger.info("==========================程序 启动 完毕==========================");
